@@ -1,0 +1,3 @@
+interface:
+  display_name: "Connect Social Accounts"
+  short_description: "Connect, inspect, group, or disconnect social accounts in PostPeer."

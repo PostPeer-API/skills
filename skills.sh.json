@@ -1,0 +1,41 @@
+{
+  "$schema": "https://skills.sh/schemas/skills.sh.schema.json",
+  "notGrouped": "bottom",
+  "groupings": [
+    {
+      "title": "Publishing",
+      "description": "Skills for publishing, scheduling, rescheduling, and canceling social posts.",
+      "skills": [
+        "schedule-social-post"
+      ]
+    },
+    {
+      "title": "Connections",
+      "description": "Skills for connecting and organizing social accounts.",
+      "skills": [
+        "connect-social-accounts"
+      ]
+    },
+    {
+      "title": "Analytics",
+      "description": "Skills for reporting on post and account performance.",
+      "skills": [
+        "analytics-report"
+      ]
+    },
+    {
+      "title": "Developer Workflows",
+      "description": "Skills for PostPeer API routing, REST examples, and SDK usage.",
+      "skills": [
+        "postpeer-api"
+      ]
+    },
+    {
+      "title": "Admin",
+      "description": "Skills for post lifecycle notifications and operational alerts.",
+      "skills": [
+        "webhook-notifications"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+interface:
+  display_name: "Analytics Report"
+  short_description: "Retrieve and summarize PostPeer post and platform analytics."

@@ -1,0 +1,3 @@
+interface:
+  display_name: "Webhook Notifications"
+  short_description: "Configure PostPeer lifecycle alerts through webhooks or email."

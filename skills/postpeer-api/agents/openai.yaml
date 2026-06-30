@@ -1,0 +1,3 @@
+interface:
+  display_name: "PostPeer API"
+  short_description: "Route PostPeer MCP, REST, curl, SDK, and platform-specific social publishing tasks."

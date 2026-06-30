@@ -1,0 +1,3 @@
+interface:
+  display_name: "Schedule Social Post"
+  short_description: "Publish now, schedule, reschedule, cancel, or inspect PostPeer social posts."

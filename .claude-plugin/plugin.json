@@ -1,0 +1,26 @@
+{
+  "name": "postpeer-skills",
+  "version": "1.0.0",
+  "description": "PostPeer agent skills for social publishing, scheduling, account connections, analytics, webhooks, REST API, SDK, and MCP workflows.",
+  "homepage": "https://postpeer.dev",
+  "repository": "https://github.com/PostPeer-API/skills",
+  "license": "MIT",
+  "skills": [
+    "./skills/postpeer-api",
+    "./skills/schedule-social-post",
+    "./skills/connect-social-accounts",
+    "./skills/analytics-report",
+    "./skills/webhook-notifications"
+  ],
+  "keywords": [
+    "postpeer",
+    "social-media",
+    "publishing",
+    "scheduling",
+    "analytics",
+    "mcp",
+    "api",
+    "webhooks",
+    "oauth"
+  ]
+}
