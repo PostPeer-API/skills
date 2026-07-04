@@ -7,26 +7,26 @@ description: Route raw PostPeer MCP, REST API, curl, OpenAPI, and TypeScript SDK
 
 ## Overview
 
-Use this as the shared PostPeer routing layer. Prefer PostPeer MCP tools when available for agent-native execution. When MCP is not configured, use the REST API with `curl` or the TypeScript SDK.
+Use this as the shared PostPeer routing layer. The default path is the REST API with `curl`, which needs nothing beyond a `POSTPEER_API_KEY`. MCP is optional: if the client already has the PostPeer MCP tools configured, use them; if not, REST covers every capability on its own. The TypeScript SDK (`@postpeer/node`) is also available for code integrations.
 
-Do not build or suggest a separate CLI unless the user explicitly asks for terminal-first batch workflows outside MCP clients.
+Do not build or suggest a separate CLI unless the user explicitly asks for terminal-first batch workflows.
 
 ## Access Paths
 
-- Hosted MCP: `https://mcp.postpeer.dev/mcp` with `Authorization: Bearer <access key>`.
-- npm MCP: `POSTPEER_API_KEY=<key> npx -y postpeer-mcp@latest`.
-- REST API: `https://api.postpeer.dev` with `x-access-key: <access key>`.
+- REST API (default): `https://api.postpeer.dev` with `x-access-key: <access key>`. Needs only a `POSTPEER_API_KEY`.
 - OpenAPI spec: `https://api.postpeer.dev/documentation/json`.
 - SDK: install `@postpeer/node`, then instantiate with `POSTPEER_API_KEY`.
+- Hosted MCP (optional): `https://mcp.postpeer.dev/mcp` with `Authorization: Bearer <access key>`.
+- npm MCP (optional): `POSTPEER_API_KEY=<key> npx -y postpeer-mcp@latest`.
 - Dashboard access keys: `https://postpeer.dev/dashboard`.
 
 Do not ask the user for an API key unless a live call is required and no key is configured.
 
 ## REST API with curl
 
-Use REST when MCP tools are unavailable, when the user explicitly asks for API examples, or when writing docs/code for a non-agent integration.
+REST is the default execution path and needs only a `POSTPEER_API_KEY`. Use it directly; reach for MCP tools only when the client already has them configured.
 
-Authentication:
+Authentication. The skills read the key from `POSTPEER_API_KEY` (for example a `.env` file with `POSTPEER_API_KEY=...`). Never print the key back or commit `.env`:
 
 ```bash
 export POSTPEER_API_KEY="YOUR_POSTPEER_ACCESS_KEY"

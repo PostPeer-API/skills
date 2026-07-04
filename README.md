@@ -1,8 +1,8 @@
 # PostPeer Skills
 
-Workflow-first skills for AI agents using [PostPeer](https://postpeer.dev) to publish, schedule, analyze, and manage social media posts through the PostPeer MCP/API.
+Workflow-first skills for AI agents using [PostPeer](https://postpeer.dev) to publish, schedule, analyze, and manage social media posts across TikTok, Instagram, YouTube, LinkedIn, Facebook, X, Pinterest, Threads, and Bluesky.
 
-These skills do not add a separate CLI. PostPeer already exposes the execution layer through hosted MCP, the `postpeer-mcp` npm package, the REST API at `https://api.postpeer.dev`, and the `@postpeer/node` SDK.
+The skills work standalone against the PostPeer REST API. All you need is a `POSTPEER_API_KEY`. No MCP server, no extra install, no CLI. If your agent also has the PostPeer MCP configured, the skills can use those tools instead, but MCP is entirely optional.
 
 ## Install All PostPeer Skills
 
@@ -10,11 +10,42 @@ These skills do not add a separate CLI. PostPeer already exposes the execution l
 npx skills add PostPeer-API/skills --all
 ```
 
-Use `--all` so users get the full PostPeer skill set without an interactive picker. After install, the individual skills are available for focused slash-style usage such as `/schedule-social-post`, `/analytics-report`, and `/connect-social-accounts`.
+Use `--all` so you get the full PostPeer skill set without an interactive picker. After install, the individual skills are available for focused slash-style usage such as `/schedule-social-post`, `/analytics-report`, and `/connect-social-accounts`.
 
-Set a PostPeer access key in your MCP client or environment. Get one from [postpeer.dev/dashboard](https://postpeer.dev/dashboard).
+Prefer to clone instead:
 
-Hosted MCP config:
+```bash
+git clone https://github.com/PostPeer-API/skills.git
+```
+
+## Set Your API Key
+
+Copy `.env.example` to `.env` and fill in your key:
+
+```bash
+cp .env.example .env
+```
+
+```bash
+POSTPEER_API_KEY=your_access_key_here
+```
+
+Get a key from the [PostPeer dashboard](https://postpeer.dev/dashboard). The same key works for REST and MCP.
+
+REST API (the default, no MCP needed). The skills attach the key as the `x-access-key` header:
+
+```bash
+export POSTPEER_API_KEY="your_access_key_here"
+
+curl -s "https://api.postpeer.dev/v1/connect/integrations" \
+  -H "x-access-key: $POSTPEER_API_KEY"
+```
+
+OpenAPI spec: `https://api.postpeer.dev/documentation/json`.
+
+## Optional: Use MCP
+
+The skills do not require MCP. If you prefer a tool-calling client, PostPeer also runs a hosted MCP server. Point your client at it with the same key:
 
 ```json
 {
@@ -29,26 +60,11 @@ Hosted MCP config:
 }
 ```
 
-Local npm MCP:
+Or run the npm MCP locally:
 
 ```bash
-export POSTPEER_API_KEY="YOUR_POSTPEER_ACCESS_KEY"
+export POSTPEER_API_KEY="your_access_key_here"
 npx -y postpeer-mcp@latest
-```
-
-REST API:
-
-```bash
-export POSTPEER_API_KEY="YOUR_POSTPEER_ACCESS_KEY"
-
-curl -s "https://api.postpeer.dev/v1/connect/integrations" \
-  -H "x-access-key: $POSTPEER_API_KEY"
-```
-
-OpenAPI spec:
-
-```text
-https://api.postpeer.dev/documentation/json
 ```
 
 ## Available Skills
@@ -57,8 +73,8 @@ Install with `--all` so users receive every skill in one command.
 
 | Skill | Use it when you want to... | Output |
 |---|---|---|
-| [`postpeer-api`](skills/postpeer-api/) | Route raw PostPeer MCP/API/curl/SDK tasks and understand platform rules | Correct tool/API plan, auth and prerequisite guidance |
-| [`schedule-social-post`](skills/schedule-social-post/) | Publish immediately or schedule a post to one or more platforms | Valid `create_post` payload or MCP/API tool call |
+| [`postpeer-api`](skills/postpeer-api/) | Route raw PostPeer REST/curl/SDK/MCP tasks and understand platform rules | Correct API plan, auth and prerequisite guidance |
+| [`schedule-social-post`](skills/schedule-social-post/) | Publish immediately or schedule a post to one or more platforms | Valid REST `POST /v1/posts` call (or MCP `create_post`) |
 | [`connect-social-accounts`](skills/connect-social-accounts/) | Connect or inspect social integrations | OAuth, Bluesky, profile, and integration steps |
 | [`analytics-report`](skills/analytics-report/) | Report on post or account performance | Metrics summary with caveats and next actions |
 | [`webhook-notifications`](skills/webhook-notifications/) | Set up post lifecycle alerts | Webhook/email notification plan and tool calls |
@@ -97,7 +113,7 @@ Use `postpeer-api` as the shared routing and hard-rules layer. The workflow skil
 
 1. Treat `https://api.postpeer.dev/documentation/json` as the REST source of truth.
 2. Workflow first, API second.
-3. Prefer MCP tools when available.
+3. REST is the default and works on its own. Use the PostPeer MCP tools only if a client already has them configured.
 4. Do not invent platform settings. Discover required values from PostPeer tools or OpenAPI.
 5. Upload local media only when needed; use existing public URLs directly.
 6. Respect platform prerequisites, especially TikTok creator info and Pinterest board IDs.
