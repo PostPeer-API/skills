@@ -1,6 +1,6 @@
 ---
 name: connect-social-accounts
-description: Connect, inspect, group, or disconnect social accounts in PostPeer. Use when the user asks to add OAuth integrations, connect LinkedIn/TikTok/Instagram/YouTube/Facebook/X/Pinterest/Threads/Bluesky, create customer profiles, list connected accounts, generate OAuth URLs, use Bluesky app passwords, or remove integrations.
+description: Connect, inspect, group, or disconnect social accounts in PostPeer. Use when the user asks to add OAuth integrations, connect LinkedIn/TikTok/Instagram/YouTube/Facebook/X/Pinterest/Threads/Bluesky/Google Business, create customer profiles, list connected accounts, generate OAuth URLs, use Bluesky app passwords, or remove integrations.
 ---
 
 # Connect Social Accounts

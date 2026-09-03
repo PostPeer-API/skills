@@ -1,6 +1,6 @@
 ---
 name: schedule-social-post
-description: Publish now or schedule social posts through PostPeer across TikTok, Instagram, YouTube, LinkedIn, Facebook, X/Twitter, Pinterest, Bluesky, Threads, and other connected platforms. Use when the user asks to create, publish, schedule, queue, cancel, reschedule, draft, or inspect a social post, including multi-platform posts and posts with media.
+description: Publish now or schedule social posts through PostPeer across TikTok, Instagram, YouTube, LinkedIn, Facebook, X/Twitter, Pinterest, Bluesky, Threads, Google Business, and other connected platforms. Use when the user asks to create, publish, schedule, queue, cancel, reschedule, draft, or inspect a social post, including multi-platform posts and posts with media.
 ---
 
 # Schedule Social Post
@@ -15,9 +15,10 @@ Create valid PostPeer posting workflows. Use `postpeer-api` for tool names, auth
 2. If the post has local media, call `create_media_upload`, upload the file bytes to the returned `uploadUrl`, then use the returned `publicUrl` in `mediaItems`.
 3. For TikTok, call `get_tiktok_creator_info` and choose a returned privacy level.
 4. For Pinterest, call `get_pinterest_boards` and include `platformSpecificData.boardId`.
-5. Build `create_post` with top-level `content`, optional `mediaItems`, and one platform object per account.
-6. Use `publishNow: true` for immediate publish. Use `scheduledFor` and `timezone` for future delivery.
-7. Return the PostPeer post ID, scheduled time, target platforms, and any follow-up constraints.
+5. For Google Business, each integration is one Business Profile location. Optionally set `platformSpecificData.topicType` (`STANDARD`, `EVENT`, or `OFFER`) and a `callToActionType` (`BOOK`, `ORDER`, `SHOP`, `LEARN_MORE`, `SIGN_UP`, `CALL`, `GET_OFFER`) with `callToActionUrl`; `EVENT` posts add `eventTitle` and start/end date and time, `OFFER` posts add `offerCouponCode`, `offerRedeemOnlineUrl`, and `offerTermsConditions`.
+6. Build `create_post` with top-level `content`, optional `mediaItems`, and one platform object per account.
+7. Use `publishNow: true` for immediate publish. Use `scheduledFor` and `timezone` for future delivery.
+8. Return the PostPeer post ID, scheduled time, target platforms, and any follow-up constraints.
 
 ## Payload Shape
 
