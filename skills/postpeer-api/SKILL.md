@@ -1,6 +1,8 @@
 ---
 name: postpeer-api
 description: Route raw PostPeer MCP, REST API, curl, OpenAPI, and TypeScript SDK work. Use when the user asks for PostPeer API docs, postpeer.dev, postpeer-mcp, @postpeer/node, curl examples, REST API examples, OpenAPI paths, endpoint schemas, auth, SDK usage, platform prerequisite lookup, or low-level tool routing. For concrete workflows, prefer the focused PostPeer skills for scheduling, account connections, analytics, and notifications.
+license: MIT
+compatibility: Requires outbound HTTPS access and a POSTPEER_API_KEY for authenticated PostPeer operations. MCP and the TypeScript SDK are optional.
 ---
 
 # PostPeer API
@@ -26,7 +28,7 @@ Do not ask the user for an API key unless a live call is required and no key is 
 
 REST is the default execution path and needs only a `POSTPEER_API_KEY`. Use it directly; reach for MCP tools only when the client already has them configured.
 
-Authentication. The skills read the key from `POSTPEER_API_KEY` (for example a `.env` file with `POSTPEER_API_KEY=...`). Never print the key back or commit `.env`:
+Authentication. Read the key from the `POSTPEER_API_KEY` environment variable. A `.env` file has no effect until the shell or an environment loader reads it. Never print the key or commit `.env`:
 
 ```bash
 export POSTPEER_API_KEY="YOUR_POSTPEER_ACCESS_KEY"
@@ -82,7 +84,7 @@ Use `https://api.postpeer.dev/documentation/json` as the REST source of truth. I
 
 ## Hard Rules
 
-- Set either `publishNow: true` or `scheduledFor` plus `timezone`, not both as competing intents.
+- Set one delivery intent: `saveAsDraft: true`, `publishNow: true`, or `scheduledFor` plus `timezone`.
 - Use `create_media_upload` only for local media that needs a public URL. Skip it when the asset already has a public URL.
 - TikTok requires `get_tiktok_creator_info` before publishing. Use one returned `privacyLevelOptions` value and respect disabled comment, duet, and stitch flags.
 - Pinterest requires `get_pinterest_boards`; pass the selected `boardId` in `platformSpecificData`.
@@ -90,6 +92,7 @@ Use `https://api.postpeer.dev/documentation/json` as the REST source of truth. I
 - Use notifications for publish lifecycle events instead of polling by default.
 - Do not invent platform-specific fields. Discover them from PostPeer helpers or existing docs.
 - Scheduled posts should be canceled with `cancel_scheduled_post`; published records use `delete_post`.
+- Treat an explicit user request as authorization for the requested external change. Otherwise, confirm the content, accounts, delivery time, and destructive actions before executing them.
 
 ## Common REST Endpoints
 
