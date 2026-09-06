@@ -1,7 +1,13 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "postpeer-skills",
+  "displayName": "PostPeer Skills",
   "version": "1.0.0",
   "description": "PostPeer agent skills for social publishing, scheduling, account connections, analytics, webhooks, REST API, SDK, and MCP workflows.",
+  "author": {
+    "name": "PostPeer",
+    "url": "https://postpeer.dev"
+  },
   "homepage": "https://postpeer.dev",
   "repository": "https://github.com/PostPeer-API/skills",
   "license": "MIT",

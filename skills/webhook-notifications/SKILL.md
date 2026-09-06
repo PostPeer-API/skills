@@ -1,6 +1,8 @@
 ---
 name: webhook-notifications
 description: Configure PostPeer lifecycle notifications for post.scheduled, post.published, post.partial, post.failed, webhook endpoints, and email recipients. Use when the user asks for webhooks, callbacks, alerts, notifications, publish status events, failure monitoring, email alerts, testing webhook delivery, or updating notification subscriptions.
+license: MIT
+compatibility: Requires outbound HTTPS access and a POSTPEER_API_KEY for live PostPeer operations. Webhook delivery requires a reachable HTTPS endpoint; email delivery requires authorized recipients.
 ---
 
 # Webhook Notifications
@@ -15,8 +17,9 @@ Use PostPeer notifications for publish lifecycle events. Prefer notifications ov
 2. Decide delivery channel: webhook or email.
 3. Decide scope: all profiles, one `profileId`, or scheduled posts only.
 4. For webhooks, test with `test_notification` before saving when possible.
-5. Create or update the subscription with `create_notification` or `update_notification`.
-6. Return the notification ID, events, channel, and scope.
+5. Before sending a test or changing a subscription, verify the destination, event types, and scope. An explicit user request containing those details counts as confirmation.
+6. Create or update the subscription with `create_notification` or `update_notification`.
+7. Return the notification ID, events, channel, and scope.
 
 ## Manage Subscriptions
 

@@ -1,13 +1,15 @@
 ---
 name: analytics-report
 description: Retrieve and summarize PostPeer social analytics for posts, platforms, connected accounts, date ranges, impressions, views, likes, comments, shares, saves, clicks, and engagement. Use when the user asks for performance reports, analytics dashboards, best/worst posts, account metrics, direct platform analytics, or metrics for posts not created through PostPeer.
+license: MIT
+compatibility: Requires outbound HTTPS access and a POSTPEER_API_KEY for live PostPeer analytics. Results depend on the metrics exposed by each connected platform.
 ---
 
 # Analytics Report
 
 ## Overview
 
-Use PostPeer analytics to produce concise, caveated performance reports. Use `postpeer-api` for exact tool, REST, or SDK parameters.
+Use PostPeer analytics to produce concise, caveated performance reports. Use the companion `postpeer-api` skill for exact tool, REST, or SDK parameters.
 
 ## Routing
 

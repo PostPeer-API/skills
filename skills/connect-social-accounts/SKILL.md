@@ -1,13 +1,15 @@
 ---
 name: connect-social-accounts
 description: Connect, inspect, group, or disconnect social accounts in PostPeer. Use when the user asks to add OAuth integrations, connect LinkedIn/TikTok/Instagram/YouTube/Facebook/X/Pinterest/Threads/Bluesky/Google Business, create customer profiles, list connected accounts, generate OAuth URLs, use Bluesky app passwords, or remove integrations.
+license: MIT
+compatibility: Requires outbound HTTPS access and a POSTPEER_API_KEY for live PostPeer operations. Account connections also require authorization from the social-platform account owner.
 ---
 
 # Connect Social Accounts
 
 ## Overview
 
-Guide agents through connecting social accounts to PostPeer. Use `postpeer-api` for tool names, REST examples, and auth.
+Guide agents through connecting social accounts to PostPeer. Use the companion `postpeer-api` skill for tool names, REST examples, and authentication.
 
 ## Workflow
 
@@ -84,5 +86,6 @@ Only use BYOK app tools when the user explicitly wants their own OAuth app crede
 ## Safety
 
 - Never ask for a user's main Bluesky password; ask for an app password.
+- Send a Bluesky app password only to the PostPeer authentication endpoint. Never repeat, log, or save it.
 - Do not disconnect integrations unless explicitly requested.
 - Include OAuth URLs as user action items; the agent cannot complete third-party authorization by itself.
