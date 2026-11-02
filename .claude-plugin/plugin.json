@@ -2,14 +2,19 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "postpeer-skills",
   "displayName": "PostPeer Skills",
-  "version": "1.0.0",
-  "description": "PostPeer agent skills for social publishing, scheduling, account connections, analytics, webhooks, REST API, SDK, and MCP workflows.",
+  "version": "1.1.0",
+  "description": "PostPeer skills and a hosted MCP connector for social publishing, scheduling, account connections, analytics, and webhooks.",
   "author": {
     "name": "PostPeer",
     "url": "https://postpeer.dev"
   },
   "homepage": "https://postpeer.dev",
   "repository": "https://github.com/PostPeer-API/skills",
+  "icon": "./.claude-plugin/icon.png",
+  "documentationUrl": "https://postpeer.dev/docs/ai-agents/mcp",
+  "supportUrl": "https://postpeer.dev/contact",
+  "privacyPolicyUrl": "https://postpeer.dev/privacy",
+  "termsOfServiceUrl": "https://postpeer.dev/terms",
   "license": "MIT",
   "skills": [
     "./skills/postpeer-api",
@@ -28,5 +33,14 @@
     "api",
     "webhooks",
     "oauth"
-  ]
+  ],
+  "userConfig": {
+    "postpeer_api_key": {
+      "type": "string",
+      "title": "PostPeer API key",
+      "description": "Access key created in the PostPeer dashboard at https://postpeer.dev/dashboard",
+      "required": true,
+      "sensitive": true
+    }
+  }
 }

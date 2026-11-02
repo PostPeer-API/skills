@@ -1,128 +1,55 @@
 ---
 name: postpeer-api
-description: Route raw PostPeer MCP, REST API, curl, OpenAPI, and TypeScript SDK work. Use when the user asks for PostPeer API docs, postpeer.dev, postpeer-mcp, @postpeer/node, curl examples, REST API examples, OpenAPI paths, endpoint schemas, auth, SDK usage, platform prerequisite lookup, or low-level tool routing. For concrete workflows, prefer the focused PostPeer skills for scheduling, account connections, analytics, and notifications.
+description: Route PostPeer MCP and developer-reference work. Use when the user asks about PostPeer tools, postpeer.dev, MCP, REST or OpenAPI schemas, TypeScript SDK usage, platform prerequisites, authentication architecture, or low-level tool routing. For live publishing, connections, analytics, and notifications, use the bundled PostPeer MCP tools and prefer the focused PostPeer skills.
 license: MIT
-compatibility: Requires outbound HTTPS access and a POSTPEER_API_KEY for authenticated PostPeer operations. MCP and the TypeScript SDK are optional.
+compatibility: Live operations require the bundled PostPeer MCP connector and outbound HTTPS. The PostPeer access key is collected securely when the plugin is configured.
 ---
 
 # PostPeer API
 
-## Overview
+## Execution Boundary
 
-Use this as the shared PostPeer routing layer. The default path is the REST API with `curl`, which needs nothing beyond a `POSTPEER_API_KEY`. MCP is optional: if the client already has the PostPeer MCP tools configured, use them; if not, REST covers every capability on its own. The TypeScript SDK (`@postpeer/node`) is also available for code integrations.
+Use the bundled PostPeer MCP server for every live PostPeer operation. Its access key is collected in the plugin configuration UI and passed securely to the declared server.
 
-Do not build or suggest a separate CLI unless the user explicitly asks for terminal-first batch workflows.
+- Do not look for credentials in shell configuration, local files, or process state.
+- Do not ask the user to paste an access key into chat.
+- Do not make authenticated REST requests or launch a local MCP package.
+- If the MCP server is unavailable or authentication fails, explain how to update the plugin's PostPeer API key in Claude's plugin configuration UI, then stop the live operation.
 
-## Access Paths
+REST, SDK, and OpenAPI information may be discussed when the user is building their own integration. Treat it as developer reference, not as this plugin's execution path. The OpenAPI source of truth is `https://api.postpeer.dev/documentation/json`.
 
-- REST API (default): `https://api.postpeer.dev` with `x-access-key: <access key>`. Needs only a `POSTPEER_API_KEY`.
-- OpenAPI spec: `https://api.postpeer.dev/documentation/json`.
-- SDK: install `@postpeer/node`, then instantiate with `POSTPEER_API_KEY`.
-- Hosted MCP (optional): `https://mcp.postpeer.dev/mcp` with `Authorization: Bearer <access key>`.
-- npm MCP (optional): `POSTPEER_API_KEY=<key> npx -y postpeer-mcp@latest`.
-- Dashboard access keys: `https://postpeer.dev/dashboard`.
+## MCP Tool Routing
 
-Do not ask the user for an API key unless a live call is required and no key is configured.
+The names below are exposed by PostPeer's hosted MCP documentation and implementation:
 
-## REST API with curl
-
-REST is the default execution path and needs only a `POSTPEER_API_KEY`. Use it directly; reach for MCP tools only when the client already has them configured.
-
-Authentication. Read the key from the `POSTPEER_API_KEY` environment variable. A `.env` file has no effect until the shell or an environment loader reads it. Never print the key or commit `.env`:
-
-```bash
-export POSTPEER_API_KEY="YOUR_POSTPEER_ACCESS_KEY"
-```
-
-Health check:
-
-```bash
-curl -s "https://api.postpeer.dev/v1/health" \
-  -H "x-access-key: $POSTPEER_API_KEY"
-```
-
-List connected integrations:
-
-```bash
-curl -s "https://api.postpeer.dev/v1/connect/integrations" \
-  -H "x-access-key: $POSTPEER_API_KEY"
-```
-
-Create a scheduled post:
-
-```bash
-curl -s -X POST "https://api.postpeer.dev/v1/posts" \
-  -H "x-access-key: $POSTPEER_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "content": "Post text",
-    "platforms": [
-      {
-        "platform": "linkedin",
-        "accountId": "integration_id"
-      }
-    ],
-    "scheduledFor": "2026-07-01T09:00:00",
-    "timezone": "America/New_York"
-  }'
-```
-
-Use `https://api.postpeer.dev/documentation/json` as the REST source of truth. If an endpoint path, request body, enum, or response shape is uncertain, fetch the OpenAPI spec or use MCP docs/search before inventing a value.
-
-## Tool Routing
-
-- Posting: `create_post`, `list_posts`, `get_post`, `delete_post`.
+- Posts: `create_post`, `list_posts`, `get_post`, `delete_post`.
 - Scheduling: `list_scheduled_posts`, `cancel_scheduled_post`, `reschedule_post`.
 - Connections: `get_oauth_url`, `connect_bluesky`, `list_integrations`, `disconnect_integration`.
 - Profiles: `create_profile`, `list_profiles`, `get_profile`, `update_profile`, `delete_profile`.
-- Analytics: `get_analytics`.
-- Platforms: `list_platforms`, `get_pinterest_boards`, `get_tiktok_creator_info`.
-- Media: `create_media_upload`.
+- Analytics: `get_analytics` and the platform-specific analytics tools returned by the server.
+- Platforms: `list_platforms`, `get_pinterest_boards`, `get_tiktok_creator_info`, and other platform helpers returned by the server.
+- Media: `create_media_upload`, plus media-management tools returned by the server.
 - AI helpers: `ai_write_content`, `ai_generate_image`.
 - BYOK apps: `create_app`, `list_apps`, `get_app`, `update_app`, `delete_app`.
 - Notifications: `test_notification`, `create_notification`, `list_notifications`, `get_notification`, `update_notification`, `delete_notification`.
+
+When a capability is not listed here, discover it from the connected PostPeer server instead of inventing a tool name or request shape.
 
 ## Hard Rules
 
 - Set one delivery intent: `saveAsDraft: true`, `publishNow: true`, or `scheduledFor` plus `timezone`.
 - Use `create_media_upload` only for local media that needs a public URL. Skip it when the asset already has a public URL.
-- TikTok requires `get_tiktok_creator_info` before publishing. Use one returned `privacyLevelOptions` value and respect disabled comment, duet, and stitch flags.
+- TikTok requires `get_tiktok_creator_info` before publishing. Use a returned `privacyLevelOptions` value and respect disabled comment, duet, and stitch flags.
 - Pinterest requires `get_pinterest_boards`; pass the selected `boardId` in `platformSpecificData`.
 - Use profiles to group integrations by end user, customer, or workspace.
-- Use notifications for publish lifecycle events instead of polling by default.
-- Do not invent platform-specific fields. Discover them from PostPeer helpers or existing docs.
-- Scheduled posts should be canceled with `cancel_scheduled_post`; published records use `delete_post`.
-- Treat an explicit user request as authorization for the requested external change. Otherwise, confirm the content, accounts, delivery time, and destructive actions before executing them.
-
-## Common REST Endpoints
-
-- `GET /v1/health`
-- `GET /v1/health/auth`
-- `GET /v1/connect/{platform}`
-- `POST /v1/connect/bluesky/auth`
-- `GET /v1/connect/integrations`
-- `DELETE /v1/connect/integrations/{id}`
-- `POST /v1/posts`
-- `GET /v1/posts`
-- `GET /v1/posts/{postId}`
-- `DELETE /v1/posts/{postId}`
-- `GET /v1/posts/scheduled`
-- `DELETE /v1/posts/scheduled/{postId}`
-- `PATCH /v1/posts/scheduled/{postId}`
-- `POST /v1/media/upload`
-- `GET /v1/analytics`
-- `GET /v1/pinterest/boards`
-- `GET /v1/tiktok/creator-info`
-- `POST /v1/notifications/test`
-- `POST /v1/notifications`
-- `GET /v1/notifications`
-- `GET /v1/notifications/{id}`
-- `PATCH /v1/notifications/{id}`
-- `DELETE /v1/notifications/{id}`
+- Prefer notifications over repeated polling for publish lifecycle events.
+- Do not invent platform-specific fields. Discover them from PostPeer helpers or current documentation.
+- Cancel queued posts with `cancel_scheduled_post`; delete post records with `delete_post`.
+- Confirm publishing, deleting, disconnecting, webhook creation or tests, recipient changes, and other external changes unless the user's explicit request already provides the target and intended change.
 
 ## Output Standards
 
-- State which tools or API surfaces were used.
+- State which PostPeer MCP tools were used.
 - Include IDs needed for follow-up operations.
 - Call out platform prerequisites and user action required for OAuth.
-- Do not expose access keys or secrets.
+- Never expose access keys, social credentials, webhook secrets, or other sensitive values.

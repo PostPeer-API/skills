@@ -1,92 +1,38 @@
 ---
 name: webhook-notifications
-description: Configure PostPeer lifecycle notifications for post.scheduled, post.published, post.partial, post.failed, webhook endpoints, and email recipients. Use when the user asks for webhooks, callbacks, alerts, notifications, publish status events, failure monitoring, email alerts, testing webhook delivery, or updating notification subscriptions.
+description: Configure PostPeer lifecycle notifications for scheduled, published, partial, and failed posts through webhook endpoints or email recipients. Use when the user asks for webhooks, callbacks, alerts, publish-status events, failure monitoring, email alerts, testing delivery, or updating notification subscriptions.
 license: MIT
-compatibility: Requires outbound HTTPS access and a POSTPEER_API_KEY for live PostPeer operations. Webhook delivery requires a reachable HTTPS endpoint; email delivery requires authorized recipients.
+compatibility: Live operations require the bundled PostPeer MCP connector and outbound HTTPS. The PostPeer access key is collected securely when the plugin is configured. Webhooks require a reachable HTTPS endpoint; email delivery requires authorized recipients.
 ---
 
 # Webhook Notifications
 
-## Overview
+Use the bundled PostPeer MCP tools for every live operation. Never retrieve credentials from the user's machine or ask the user to paste the PostPeer access key into chat. If MCP authentication fails, direct the user to update the key in Claude's plugin configuration UI.
 
-Use PostPeer notifications for publish lifecycle events. Prefer notifications over repeated polling when the user wants ongoing delivery status.
+Prefer notifications over repeated polling when the user wants ongoing delivery status.
 
 ## Workflow
 
-1. Decide event types: `post.scheduled`, `post.published`, `post.partial`, and `post.failed`.
-2. Decide delivery channel: webhook or email.
-3. Decide scope: all profiles, one `profileId`, or scheduled posts only.
-4. For webhooks, test with `test_notification` before saving when possible.
-5. Before sending a test or changing a subscription, verify the destination, event types, and scope. An explicit user request containing those details counts as confirmation.
-6. Create or update the subscription with `create_notification` or `update_notification`.
-7. Return the notification ID, events, channel, and scope.
+1. Select event types supported by the connected tool, commonly scheduled, published, partial, and failed post lifecycle events.
+2. Select a webhook or email channel.
+3. Select the scope: all profiles, one `profileId`, or scheduled posts only, when supported.
+4. For a webhook, validate that the destination uses HTTPS. Use `test_notification` only after confirming the destination because a test sends external data.
+5. Before creating or changing a subscription, verify the destination, event types, enabled state, and scope. An explicit request containing those details counts as confirmation.
+6. Create or update with `create_notification` or `update_notification` using the current MCP schema.
+7. Return the notification ID, events, channel, enabled state, and scope without exposing secrets.
 
 ## Manage Subscriptions
 
-- List: `list_notifications`.
-- Inspect: `get_notification`.
-- Update channel settings: `update_notification`.
-- Delete: `delete_notification`.
+- List with `list_notifications`.
+- Inspect with `get_notification`.
+- Update with `update_notification`.
+- Delete with `delete_notification` only after confirming the exact subscription unless explicitly requested.
 
-Channel is immutable. To switch from webhook to email, delete and recreate.
-
-## Curl Examples
-
-Test a webhook destination:
-
-```bash
-curl -s -X POST "https://api.postpeer.dev/v1/notifications/test" \
-  -H "x-access-key: $POSTPEER_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "channel": "webhook",
-    "webhook": {
-      "url": "https://example.com/postpeer/webhook"
-    }
-  }'
-```
-
-Create a webhook subscription:
-
-```bash
-curl -s -X POST "https://api.postpeer.dev/v1/notifications" \
-  -H "x-access-key: $POSTPEER_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "channel": "webhook",
-    "eventTypes": ["post.published", "post.failed"],
-    "webhook": {
-      "url": "https://example.com/postpeer/webhook"
-    },
-    "enabled": true
-  }'
-```
-
-Create an email notification:
-
-```bash
-curl -s -X POST "https://api.postpeer.dev/v1/notifications" \
-  -H "x-access-key: $POSTPEER_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "channel": "email",
-    "eventTypes": ["post.failed"],
-    "email": {
-      "recipients": ["ops@example.com"]
-    },
-    "enabled": true
-  }'
-```
-
-List subscriptions:
-
-```bash
-curl -s "https://api.postpeer.dev/v1/notifications" \
-  -H "x-access-key: $POSTPEER_API_KEY"
-```
+If the channel is immutable in the current schema, explain that switching between webhook and email requires deleting and recreating the subscription, and confirm both actions before proceeding.
 
 ## Safety
 
-- Webhook URLs must be HTTPS.
-- Do not expose webhook signing secrets or credentials.
-- Scope by `profileId` when the notification belongs to one customer or workspace.
+- Webhook URLs must use HTTPS.
+- Treat webhook URLs, signing secrets, and email recipients as sensitive operational data; disclose them only as needed to confirm the requested destination.
+- Confirm test sends, subscription creation, destination or recipient changes, enable/disable changes, and deletion unless the user's explicit request already identifies the exact change.
+- Never include access keys or social credentials in webhook payloads or responses.

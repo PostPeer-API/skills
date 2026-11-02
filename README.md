@@ -1,68 +1,18 @@
 # PostPeer Skills
 
-PostPeer Skills is a Claude Code plugin for publishing, scheduling, analyzing, and managing social media posts through [PostPeer](https://postpeer.dev). It supports TikTok, Instagram, YouTube, LinkedIn, Facebook, X, Pinterest, Threads, Bluesky, and Google Business Profile.
+PostPeer Skills is a Claude Code plugin for publishing, scheduling, analyzing, and managing social media posts through [PostPeer](https://postpeer.dev). Installing it adds five focused skills and the hosted PostPeer MCP connector for TikTok, Instagram, YouTube, LinkedIn, Facebook, X, Pinterest, Threads, Bluesky, and Google Business Profile.
 
-The skills use the PostPeer REST API by default. The hosted or npm PostPeer MCP server is optional.
+## Secure configuration
 
-## Claude Code installation and local testing
+When the plugin is enabled, Claude prompts for a PostPeer access key in the plugin configuration UI. The field is required and sensitive, so Claude stores it in the platform's secure credential store and supplies it only to the declared PostPeer MCP server. The skills do not read credentials from shell configuration or local files, and users should never paste access keys into chat.
 
-Install and authenticate [Claude Code](https://code.claude.com/docs/en/overview), then clone this repository:
+Create or manage an access key in the [PostPeer dashboard](https://postpeer.dev/dashboard). The plugin connects to the hosted [PostPeer MCP endpoint](https://mcp.postpeer.dev/mcp); nothing is installed or executed locally by this plugin.
 
-```bash
-git clone https://github.com/PostPeer-API/skills.git
-cd skills
-```
-
-Validate the plugin before loading it:
-
-```bash
-claude plugin validate ./
-claude plugin validate ./ --strict
-```
-
-Start a local Claude Code session with the plugin:
-
-```bash
-claude --plugin-dir ./
-```
-
-In that session, run `/help` to confirm that the five `postpeer-skills:*` commands appear. Then try a read-only request:
-
-```text
-/postpeer-skills:postpeer-api Show me how to check PostPeer API health.
-```
-
-Run `/reload-plugins` after editing a skill.
-
-## Configure `POSTPEER_API_KEY`
-
-Create an access key in the [PostPeer dashboard](https://postpeer.dev/dashboard). Never commit the key. This repository ignores `.env` and all `.env.*` variants except the tracked `.env.example` template.
-
-For the current shell session, export the key before starting Claude Code:
-
-```bash
-export POSTPEER_API_KEY="your_access_key_here"
-claude --plugin-dir ./
-```
-
-For local development, you may copy the template and load it into your shell:
-
-```bash
-cp .env.example .env
-# Edit .env and set POSTPEER_API_KEY.
-set -a
-source .env
-set +a
-claude --plugin-dir ./
-```
-
-The REST API sends the key in the `x-access-key` header. The optional MCP server uses the same key as a bearer token. Do not paste real keys into prompts, logs, examples, or committed files.
-
-## Available Claude Code commands
+## Included skills
 
 | Command | Use it to |
 | --- | --- |
-| [`/postpeer-skills:postpeer-api`](skills/postpeer-api/SKILL.md) | Plan raw REST, curl, SDK, OpenAPI, or MCP work |
+| [`/postpeer-skills:postpeer-api`](skills/postpeer-api/SKILL.md) | Route PostPeer MCP operations and developer-reference questions |
 | [`/postpeer-skills:schedule-social-post`](skills/schedule-social-post/SKILL.md) | Publish, draft, schedule, reschedule, cancel, or inspect posts |
 | [`/postpeer-skills:connect-social-accounts`](skills/connect-social-accounts/SKILL.md) | Connect, inspect, group, or disconnect social accounts |
 | [`/postpeer-skills:analytics-report`](skills/analytics-report/SKILL.md) | Retrieve and summarize post or account analytics |
@@ -88,78 +38,34 @@ Claude can also invoke these skills automatically when a request matches a skill
 /postpeer-skills:analytics-report Summarize last month's LinkedIn and TikTok performance and identify the best posts.
 ```
 
-Publishing, account disconnection, and notification changes affect external systems. Review the target accounts, content, time zone, and destination before approving those actions.
+Publishing, deleting posts, disconnecting accounts, and notification changes affect external systems. The skills require confirmation of the target, content, timing, and destination unless the user's explicit request already supplies those details.
 
-## External services and permissions
+## Services and permissions
 
 | Service or permission | Requirement |
 | --- | --- |
-| PostPeer account and API key | Required for authenticated API operations |
-| Outbound HTTPS to `api.postpeer.dev` | Required for REST calls and media-upload setup |
-| Social-platform authorization | Required only for each platform you connect or publish to; OAuth completes in the user's browser, while Bluesky requires an app password rather than the main password |
-| Local file read and upload | Required only when publishing local media; PostPeer returns a temporary upload URL |
-| Webhook endpoint or email recipient | Required only for lifecycle notifications; webhook destinations must use HTTPS |
-| PostPeer MCP and outbound HTTPS to `mcp.postpeer.dev` | Optional alternative to REST |
-| Node.js, npm registry access, and `postpeer-mcp` | Optional when running the npm MCP server |
+| PostPeer account and access key | Required for authenticated MCP operations; configured securely when the plugin is enabled |
+| Hosted PostPeer MCP | Outbound HTTPS to `mcp.postpeer.dev` is required for live operations |
+| PostPeer API | The hosted MCP server communicates with `api.postpeer.dev` on the user's behalf |
+| Social-platform authorization | Required for each platform the user connects or publishes to; OAuth completes in the account owner's browser, while Bluesky requires an app password rather than the main password |
+| Local media | Used only when the user asks to publish a local asset; PostPeer returns a temporary upload URL |
+| Webhook endpoint or email recipient | Required only when the user asks to configure lifecycle notifications; webhook destinations must use HTTPS |
 
-The REST API schema is published at [api.postpeer.dev/documentation/json](https://api.postpeer.dev/documentation/json).
+## Developer references
 
-### Optional MCP configuration
+- [PostPeer documentation](https://postpeer.dev/docs)
+- [Hosted MCP documentation](https://postpeer.dev/docs/ai-agents/mcp)
+- [OpenAPI schema](https://api.postpeer.dev/documentation/json)
+- [Privacy policy](https://postpeer.dev/privacy)
+- [Terms of service](https://postpeer.dev/terms)
+- [Support](https://postpeer.dev/contact)
 
-Hosted MCP:
+REST, SDK, and OpenAPI material is provided only as developer reference. The plugin's automatic execution path for live PostPeer operations is the declared hosted MCP server.
 
-```json
-{
-  "mcpServers": {
-    "postpeer": {
-      "url": "https://mcp.postpeer.dev/mcp",
-      "headers": {
-        "Authorization": "Bearer YOUR_POSTPEER_ACCESS_KEY"
-      }
-    }
-  }
-}
-```
+## Marketplace availability
 
-Local npm MCP:
+This plugin can be installed from the Claude community marketplace after Anthropic approves and lists it. Installation and configuration are completed through Claude's plugin UI; no repository download or local package execution is required.
 
-```bash
-export POSTPEER_API_KEY="your_access_key_here"
-npx -y postpeer-mcp@latest
-```
+## Maintainer validation
 
-## Other agent runtimes
-
-To install all five standalone skills with [skills.sh](https://skills.sh):
-
-```bash
-npx skills add PostPeer-API/skills --all
-```
-
-Standalone installations use bare commands such as `/schedule-social-post`. Claude Code plugin installations use the namespaced commands listed above.
-
-## Community marketplace installation
-
-> **Available only after Anthropic approves and lists this plugin in the Claude Code community marketplace.**
-
-After approval, add the community marketplace and install the plugin from inside Claude Code:
-
-```text
-/plugin marketplace add anthropics/claude-plugins-community
-/plugin install postpeer-skills@claude-community
-```
-
-If the install summary asks you to reload, run `/reload-plugins`.
-
-## Manual live tests
-
-The validator and `--plugin-dir` smoke test do not call PostPeer. Before release, run these tests with a non-production PostPeer project and test social accounts:
-
-1. Check `GET /v1/health/auth` and list integrations.
-2. Generate an OAuth URL without completing an unintended account connection.
-3. Save a draft, schedule a test post, reschedule it, and cancel it.
-4. Retrieve analytics for a known post or connected account.
-5. Send a test notification to a controlled HTTPS webhook, then create and delete a test subscription.
-6. Upload disposable media and confirm that the returned public URL works.
-
-Do not use production accounts, recipients, or content for these tests.
+Before release, maintainers should run the repository's JSON and plugin validators and review every credential- and execution-related text match. Live tests should use a non-production PostPeer project and test social accounts. Do not use production recipients, accounts, or content for release testing.
