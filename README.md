@@ -62,9 +62,15 @@ Publishing, deleting posts, disconnecting accounts, and notification changes aff
 
 REST, SDK, and OpenAPI material is provided only as developer reference. The plugin's automatic execution path for live PostPeer operations is the declared hosted MCP server.
 
-## Marketplace availability
+## Install
 
-This plugin can be installed from the Claude community marketplace after Anthropic approves and lists it. Installation and configuration are completed through Claude's plugin UI; no repository download or local package execution is required.
+In Claude Code, run:
+
+```text
+/plugin install postpeer-skills --marketplace PostPeer-API/skills
+```
+
+Claude then prompts for your PostPeer access key. Once Anthropic lists the plugin in the Claude community marketplace, it can also be installed from Claude's plugin UI.
 
 ## Maintainer validation
 

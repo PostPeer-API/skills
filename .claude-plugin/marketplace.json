@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "postpeer",
+  "description": "Official PostPeer plugins for Claude Code.",
+  "owner": {
+    "name": "PostPeer",
+    "url": "https://postpeer.dev"
+  },
+  "plugins": [
+    {
+      "name": "postpeer-skills",
+      "source": "./",
+      "description": "PostPeer skills and a hosted MCP connector for social publishing, scheduling, account connections, analytics, and webhooks."
+    }
+  ]
+}
